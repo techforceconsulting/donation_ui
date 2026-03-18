@@ -1,92 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-/// MAIN APP
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Donation App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(),
-    );
-  }
-}
-
-/// 🏠 HOME PAGE
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: Text("Donation App"),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-
-              /// Title
-              Text(
-                "Welcome 👋",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              SizedBox(height: 20),
-
-              /// Button
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CreateFundraiserPage(),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 55,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    gradient: LinearGradient(
-                      colors: [Colors.blue, Colors.purple],
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Start Fundraiser",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 💰 FUNDRAISER PAGE
 class CreateFundraiserPage extends StatefulWidget {
   @override
   _CreateFundraiserPageState createState() => _CreateFundraiserPageState();
@@ -105,7 +18,7 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
     "Education",
     "Emergency",
     "Animal",
-    "Other"
+    "Other",
   ];
 
   @override
@@ -113,8 +26,14 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text("Start Fundraiser"),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Text(
+          "Start Fundraiser",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -122,7 +41,7 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
           key: _formKey,
           child: ListView(
             children: [
-
+              /// Card Container
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -132,12 +51,12 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 10,
-                    )
+                      offset: Offset(0, 5),
+                    ),
                   ],
                 ),
                 child: Column(
                   children: [
-
                     /// Title
                     TextFormField(
                       decoration: InputDecoration(
@@ -151,7 +70,7 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
                       ),
                       onChanged: (value) => title = value,
                       validator: (value) =>
-                      value!.isEmpty ? "Enter title" : null,
+                          value!.isEmpty ? "Enter title" : null,
                     ),
 
                     SizedBox(height: 15),
@@ -170,7 +89,7 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
                       ),
                       onChanged: (value) => description = value,
                       validator: (value) =>
-                      value!.isEmpty ? "Enter description" : null,
+                          value!.isEmpty ? "Enter description" : null,
                     ),
 
                     SizedBox(height: 15),
@@ -190,12 +109,12 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
                       ),
                       onChanged: (value) => amount = value,
                       validator: (value) =>
-                      value!.isEmpty ? "Enter amount" : null,
+                          value!.isEmpty ? "Enter amount" : null,
                     ),
 
                     SizedBox(height: 15),
 
-                    /// Category
+                    /// Category Dropdown
                     DropdownButtonFormField<String>(
                       value: category,
                       items: categories.map((cat) {
@@ -222,26 +141,34 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
 
                     SizedBox(height: 20),
 
-                    /// Upload Image
-                    Container(
-                      height: 120,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.cloud_upload, size: 40),
-                          Text("Upload Cover Image"),
-                        ],
+                    /// Image Upload
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        height: 120,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.cloud_upload,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 8),
+                            Text("Upload Cover Image"),
+                          ],
+                        ),
                       ),
                     ),
 
                     SizedBox(height: 25),
 
-                    /// Submit
+                    /// Gradient Button
                     GestureDetector(
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
@@ -262,6 +189,7 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
                           ),
                         ),
@@ -278,8 +206,13 @@ class _CreateFundraiserPageState extends State<CreateFundraiserPage> {
   }
 
   void submitForm() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Fundraiser Created!")),
-    );
+    print("Title: $title");
+    print("Description: $description");
+    print("Amount: $amount");
+    print("Category: $category");
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Fundraiser Created!")));
   }
 }
