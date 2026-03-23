@@ -1,7 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+
+  String name = "";
+  String email = "";
+  String password = "";
+
+  Future<void> signupUser() async {
+    var url = Uri.parse("http://localhost:3001/signup");
+
+    var response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "name": name,
+        "email": email,
+        "password": password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Signup Successful")),
+      );
+
+      Navigator.pushNamed(context, '/login');
+
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Signup Failed")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +75,11 @@ class SignupScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
 
-                /// ICON
                 Icon(Icons.person_add,
                     size: 50, color: theme.colorScheme.primary),
 
                 const SizedBox(height: 10),
 
-                /// TITLE
                 Text(
                   "Create Account",
                   style: theme.textTheme.headlineSmall!
@@ -53,6 +90,7 @@ class SignupScreen extends StatelessWidget {
 
                 /// NAME
                 TextField(
+                  onChanged: (value) => name = value,
                   decoration: InputDecoration(
                     hintText: "Full Name",
                     prefixIcon: Icon(Icons.person),
@@ -69,6 +107,7 @@ class SignupScreen extends StatelessWidget {
 
                 /// EMAIL
                 TextField(
+                  onChanged: (value) => email = value,
                   decoration: InputDecoration(
                     hintText: "Email",
                     prefixIcon: Icon(Icons.email),
@@ -86,6 +125,7 @@ class SignupScreen extends StatelessWidget {
                 /// PASSWORD
                 TextField(
                   obscureText: true,
+                  onChanged: (value) => password = value,
                   decoration: InputDecoration(
                     hintText: "Password",
                     prefixIcon: Icon(Icons.lock),
@@ -112,7 +152,7 @@ class SignupScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: signupUser, // 🔥 API call
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -122,7 +162,6 @@ class SignupScreen extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                /// LOGIN NAVIGATION
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/login');
