@@ -10,35 +10,29 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-
   String name = "";
   String email = "";
   String password = "";
 
   Future<void> signupUser() async {
-    var url = Uri.parse("http://localhost:3001/signup");
+    var url = Uri.parse("http://localhost:3001/register");
 
     var response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "name": name,
-        "email": email,
-        "password": password,
-      }),
+      body: jsonEncode({"name": name, "email": email, "password": password}),
     );
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Signup Successful")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Signup Successful")));
 
       Navigator.pushNamed(context, '/login');
-
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Signup Failed")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Signup Failed")));
     }
   }
 
@@ -64,26 +58,24 @@ class _SignupScreenState extends State<SignupScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                )
-              ],
+              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-
-                Icon(Icons.person_add,
-                    size: 50, color: theme.colorScheme.primary),
+                Icon(
+                  Icons.person_add,
+                  size: 50,
+                  color: theme.colorScheme.primary,
+                ),
 
                 const SizedBox(height: 10),
 
                 Text(
                   "Create Account",
-                  style: theme.textTheme.headlineSmall!
-                      .copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.headlineSmall!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -170,7 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     "Already have an account? Login",
                     style: TextStyle(color: theme.colorScheme.primary),
                   ),
-                )
+                ),
               ],
             ),
           ),
