@@ -69,11 +69,11 @@ class _CharitismHomeState extends State<CharitismHome> {
                   fontSize: 22,
                   fontWeight: FontWeight.bold)),
           const Spacer(),
-          _menu("Home"),
-          _menu("Campaigns"),
-          _menu("About"),
-          _menu("Contact"),
-          _menu("Login"),
+          _menu("Home", context),
+          _menu("Campaigns", context),
+          _menu("About", context),
+          _menu("Contact", context),
+          _menu("Login", context),
           const SizedBox(width: 10),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -88,10 +88,20 @@ class _CharitismHomeState extends State<CharitismHome> {
     );
   }
 
-  Widget _menu(String text) {
+  Widget _menu(String text, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Text(text, style: const TextStyle(color: Colors.white)),
+      child: InkWell(
+        onTap: () {
+          if (text == "Login") {
+            Navigator.pushNamed(context, '/login');
+          }
+        },
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
     );
   }
 
