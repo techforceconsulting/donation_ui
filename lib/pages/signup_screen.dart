@@ -15,7 +15,7 @@ class _SignupScreenState extends State<SignupScreen> {
   String password = "";
 
   Future<void> signupUser() async {
-    var url = Uri.parse("http://localhost:3001/register");
+    var url = Uri.parse("http://localhost:3001/auth/register");
 
     var response = await http.post(
       url,
@@ -23,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
       body: jsonEncode({"name": name, "email": email, "password": password}),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Signup Successful")));

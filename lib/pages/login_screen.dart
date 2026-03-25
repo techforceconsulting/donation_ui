@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String token = ""; // store token
 
   Future<void> loginUser() async {
-    var url = Uri.parse("http://localhost:3001/login");
+    var url = Uri.parse("http://localhost:3001/auth/login");
 
     var response = await http.post(
       url,
@@ -41,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Login Successful")),
       );
+
+      Navigator.pushReplacementNamed(context, '/');
 
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
