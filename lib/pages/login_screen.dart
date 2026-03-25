@@ -1,7 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
+  String email = "";
+  String password = "";
+
+  String token = ""; // store token
+
+  Future<void> loginUser() async {
+    var url = Uri.parse("http://localhost:3001/login");
+
+    var response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "email": email,
+        "password": password,
+      }),
+    );
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+
+      var data = jsonDecode(response.body);
+
+      setState(() {
+        token = data['access_token']; // 🔥 store token
+      });
+
+      print("TOKEN: $token");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Login Successful")),
+      );
+
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid Credentials")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +72,18 @@ class LoginScreen extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                )
+                BoxShadow(color: Colors.black26, blurRadius: 10)
               ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
 
-                /// ICON
                 Icon(Icons.favorite,
                     size: 50, color: theme.colorScheme.primary),
 
                 const SizedBox(height: 10),
 
-                /// TITLE
                 Text(
                   "Welcome Back",
                   style: theme.textTheme.headlineSmall!
@@ -53,6 +94,7 @@ class LoginScreen extends StatelessWidget {
 
                 /// EMAIL
                 TextField(
+                  onChanged: (value) => email = value,
                   decoration: InputDecoration(
                     hintText: "Email",
                     prefixIcon: Icon(Icons.email),
@@ -70,6 +112,7 @@ class LoginScreen extends StatelessWidget {
                 /// PASSWORD
                 TextField(
                   obscureText: true,
+                  onChanged: (value) => password = value,
                   decoration: InputDecoration(
                     hintText: "Password",
                     prefixIcon: Icon(Icons.lock),
@@ -90,13 +133,13 @@ class LoginScreen extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: Colors.white, // 🔥 FIX
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: loginUser, // 🔥 API call
                     child: const Text(
                       "Login",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -106,7 +149,6 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                /// SIGNUP
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/signup');
