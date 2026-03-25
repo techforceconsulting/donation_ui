@@ -6,7 +6,7 @@ import '../pages/signup_screen.dart';
 
 class AppRouter {
   static Map<String, WidgetBuilder> get routes => {
-    '/': (context) => const CharitismHome(),
+    '/': (context) => const FundRaiser(),
     '/campaigns': (context) =>
         const placeholder.PlaceholderScreen(title: 'Campaigns'),
     '/about': (context) => const placeholder.PlaceholderScreen(title: 'About'),

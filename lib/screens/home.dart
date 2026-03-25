@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
 
-class CharitismHome extends StatefulWidget {
-  const CharitismHome({super.key});
+class FundRaiser extends StatefulWidget {
+  const FundRaiser({super.key});
 
   @override
-  State<CharitismHome> createState() => _CharitismHomeState();
+  State<FundRaiser> createState() => _FundRaiserState();
 }
 
-class _CharitismHomeState extends State<CharitismHome> {
+class _FundRaiserState extends State<FundRaiser> {
   int currentIndex = 0;
 
   final List<Map<String, String>> slides = [
     {
       "title": "Celebrate your Birthday",
       "subtitle": "with the underprivileged kids.",
-      "image":
-          "https://images.unsplash.com/photo-1511895426328-dc8714191300"
+      "image": "https://images.unsplash.com/photo-1511895426328-dc8714191300",
     },
     {
       "title": "Feed Hungry Children",
       "subtitle": "Your small help can save lives.",
-      "image":
-          "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c"
+      "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c",
     },
     {
       "title": "Support Education",
       "subtitle": "Give children a brighter future.",
-      "image":
-          "https://images.unsplash.com/photo-1509062522246-3755977927d7"
+      "image": "https://images.unsplash.com/photo-1509062522246-3755977927d7",
     },
   ];
+
+  bool isMobile(BuildContext context) =>
+      MediaQuery.of(context).size.width < 600;
+
+  bool isTablet(BuildContext context) =>
+      MediaQuery.of(context).size.width < 1000;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +41,12 @@ class _CharitismHomeState extends State<CharitismHome> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _navbar(),
-            _heroSlider(),
-            _stats(),
-            _searchSection(),
-            _campaigns(),
-            _footer(),
+            _navbar(context),
+            _heroSlider(context),
+            _stats(context),
+            _searchSection(context),
+            _campaigns(context),
+            _footer(context),
           ],
         ),
       ),
@@ -51,113 +54,142 @@ class _CharitismHomeState extends State<CharitismHome> {
   }
 
   // ================= NAVBAR =================
-  Widget _navbar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFE91E63), Color(0xFFFF6F91)],
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.favorite, color: Colors.white),
-          const SizedBox(width: 8),
-          const Text("Charitism",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold)),
-          const Spacer(),
-          _menu("Home", context),
-          _menu("Campaigns", context),
-          _menu("About", context),
-          _menu("Contact", context),
-          _menu("Login", context),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.pink,
+  Widget _navbar(BuildContext context) {
+    bool mobile = isMobile(context);
+    return SafeArea(
+      child: Material(
+        // ✅ IMPORTANT
+        color: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFE91E63), Color(0xFFFF6F91)],
             ),
-            onPressed: () {},
-            child: const Text("Donate"),
-          )
-        ],
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.favorite, color: Colors.white),
+              const SizedBox(width: 8),
+              const Text(
+                "Donation",
+                style: TextStyle(color: Colors.white, fontSize: 22),
+              ),
+              const Spacer(),
+      
+              // ✅ MOBILE VIEW
+              if (mobile) ...[
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.menu, color: Colors.white),
+                  useRootNavigator: true, // ✅ FIX FOR WEB
+                  onSelected: (value) {
+                    debugPrint("Selected: $value");
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: "Home", child: Text("Home")),
+                    PopupMenuItem(value: "Campaigns", child: Text("Campaigns")),
+                    PopupMenuItem(value: "About", child: Text("About")),
+                    PopupMenuItem(value: "Contact", child: Text("Contact")),
+                    PopupMenuItem(value: "Login", child: Text("Login")),
+                  ],
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.pink,
+                  ),
+                  onPressed: () {},
+                  child: const Text("Donate"),
+                ),
+              ]
+              // ✅ DESKTOP VIEW
+              else ...[
+                _menu("Home"),
+                _menu("Campaigns"),
+                _menu("About"),
+                _menu("Contact"),
+                _menu("Login"),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.pink,
+                  ),
+                  onPressed: () {},
+                  child: const Text("Donate"),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _menu(String text, BuildContext context) {
+  Widget _menu(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: InkWell(
-        onTap: () {
-          if (text == "Login") {
-            Navigator.pushNamed(context, '/login');
-          }
-        },
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
     );
   }
 
   // ================= HERO =================
-  Widget _heroSlider() {
+  Widget _heroSlider(BuildContext context) {
+    bool mobile = isMobile(context);
+
     return SizedBox(
-      height: 450,
+      height: mobile ? 300 : 450,
       child: Stack(
         children: [
           Image.network(
             slides[currentIndex]["image"]!,
-            height: 450,
             width: double.infinity,
             fit: BoxFit.cover,
           ),
-          Container(
-            height: 450,
-            color: Colors.black.withOpacity(0.5),
-          ),
+          Container(color: Colors.black.withValues(alpha: 0.5)),
+
           Positioned(
-            left: 80,
-            top: 120,
+            left: 20,
+            right: 20,
+            top: mobile ? 80 : 120,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   slides[currentIndex]["title"]!,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: mobile ? 22 : 40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   slides[currentIndex]["subtitle"]!,
-                  style: const TextStyle(
-                      color: Colors.white70, fontSize: 22),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: mobile ? 14 : 22,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
                   onPressed: () {},
                   child: const Text("Donate Now"),
-                )
+                ),
               ],
             ),
           ),
-
           // LEFT
           Positioned(
             left: 20,
             top: 200,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back,
-                  color: Colors.white, size: 30),
+              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
               onPressed: () {
                 setState(() {
                   currentIndex =
@@ -172,12 +204,14 @@ class _CharitismHomeState extends State<CharitismHome> {
             right: 20,
             top: 200,
             child: IconButton(
-              icon: const Icon(Icons.arrow_forward,
-                  color: Colors.white, size: 30),
+              icon: const Icon(
+                Icons.arrow_forward,
+                color: Colors.white,
+                size: 30,
+              ),
               onPressed: () {
                 setState(() {
-                  currentIndex =
-                      (currentIndex + 1) % slides.length;
+                  currentIndex = (currentIndex + 1) % slides.length;
                 });
               },
             ),
@@ -188,49 +222,53 @@ class _CharitismHomeState extends State<CharitismHome> {
   }
 
   // ================= STATS =================
-  Widget _stats() {
-    return Padding(
-      padding: const EdgeInsets.all(30),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _stat("5M+", "Lives Impacted"),
-          _stat("₹10Cr+", "Donations"),
-          _stat("50K+", "Donors"),
-        ],
+  Widget _stats(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _stat("5M+", "Lives Impacted"),
+            _stat("₹10Cr+", "Donations"),
+            _stat("50K+", "Donors"),
+          ],
+        ),
       ),
     );
   }
 
   Widget _stat(String value, String label) {
-    return Column(
-      children: [
-        Text(value,
-            style: const TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(color: Colors.grey))
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          Text(label, style: const TextStyle(color: Colors.grey)),
+        ],
+      ),
     );
   }
 
   // ================= SEARCH =================
-  Widget _searchSection() {
+  Widget _searchSection(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(30),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          const Text("Explore Campaigns",
-              style: TextStyle(
-                  fontSize: 26, fontWeight: FontWeight.bold)),
+          const Text(
+            "Explore Campaigns",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 20),
           Container(
-            width: 500,
+            width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(50),
-              boxShadow: [
-                BoxShadow(color: Colors.grey.shade200, blurRadius: 10)
-              ],
             ),
             child: const TextField(
               decoration: InputDecoration(
@@ -251,169 +289,94 @@ class _CharitismHomeState extends State<CharitismHome> {
               _chip("Relief"),
               _chip("Animals"),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
   Widget _chip(String text) {
-    return Chip(
-      label: Text(text),
-      backgroundColor: Colors.pink.shade50,
-    );
+    return Chip(label: Text(text), backgroundColor: Colors.pink.shade50);
   }
 
   // ================= CAMPAIGNS =================
-  Widget _campaigns() {
+  Widget _campaigns(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
+    int crossAxisCount = width < 600
+        ? 1
+        : width < 1000
+        ? 2
+        : 3;
+
     List data = [
       {
         "title": "Feed Hungry Children",
         "img": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c",
         "raised": 45000,
         "target": 100000,
-        "donors": 120,
-        "days": 5,
-        "tag": "Tax Benefit"
       },
       {
         "title": "Education for Girls",
         "img": "https://images.unsplash.com/photo-1509062522246-3755977927d7",
         "raised": 30000,
         "target": 80000,
-        "donors": 80,
-        "days": 10,
-        "tag": "Popular"
       },
       {
         "title": "Medical Help",
         "img": "https://images.unsplash.com/photo-1584515933487-779824d29309",
         "raised": 60000,
         "target": 120000,
-        "donors": 100,
-        "days": 7,
-        "tag": "Urgent"
-      }
+      },
     ];
 
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: Row(
-        children: data.map((e) {
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: data.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: 15,
+          mainAxisSpacing: 15,
+          childAspectRatio: 0.8,
+        ),
+        itemBuilder: (context, index) {
+          var e = data[index];
           double progress = e["raised"] / e["target"];
 
-          return Expanded(
-            child: Container(
-              margin: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade200,
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
-                  )
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                Image.network(e["img"], height: 150, fit: BoxFit.cover),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
                     children: [
-                      ClipRRect(
-                        borderRadius:
-                            const BorderRadius.vertical(top: Radius.circular(20)),
-                        child: Image.network(
-                          e["img"],
-                          height: 170,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        left: 10,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            e["tag"],
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                      const Positioned(
-                        top: 10,
-                        right: 10,
-                        child: Icon(Icons.favorite_border,
-                            color: Colors.white),
-                      ),
-                      const Positioned(
-                        bottom: 10,
-                        right: 10,
-                        child: Icon(Icons.share, color: Colors.white),
-                      ),
+                      Text(e["title"]),
+                      LinearProgressIndicator(value: progress),
+                      Text("₹${e["raised"]} / ₹${e["target"]}"),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(e["title"],
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 10),
-                        LinearProgressIndicator(
-                          value: progress,
-                          color: Colors.green,
-                          backgroundColor: Colors.grey.shade200,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                            "₹${e["raised"]} raised of ₹${e["target"]}",
-                            style: const TextStyle(fontSize: 12)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("👥 ${e["donors"]}"),
-                            Text("⏳ ${e["days"]} days"),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE91E63),
-                              foregroundColor: Colors.white,
-                            ),
-                            onPressed: () {},
-                            child: const Text("DONATE NOW"),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
           );
-        }).toList(),
+        },
       ),
     );
   }
 
   // ================= FOOTER =================
-  Widget _footer() {
+  Widget _footer(BuildContext context) {
+
     return Container(
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.all(30),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFFE91E63), Color(0xFFFF6F91)],
@@ -421,17 +384,14 @@ class _CharitismHomeState extends State<CharitismHome> {
       ),
       child: Column(
         children: [
-          const Text("Charitism",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold)),
+          const Text(
+            "Charitism",
+            style: TextStyle(color: Colors.white, fontSize: 22),
+          ),
           const SizedBox(height: 10),
-          const Text("Ensuring transparency in every donation",
-              style: TextStyle(color: Colors.white70)),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Wrap(
+            spacing: 20,
+            alignment: WrapAlignment.center,
             children: const [
               Text("About", style: TextStyle(color: Colors.white)),
               Text("Contact", style: TextStyle(color: Colors.white)),
@@ -440,8 +400,10 @@ class _CharitismHomeState extends State<CharitismHome> {
             ],
           ),
           const SizedBox(height: 20),
-          const Text("© 2026 Charitism",
-              style: TextStyle(color: Colors.white70)),
+          const Text(
+            "© 2026 Charitism",
+            style: TextStyle(color: Colors.white70),
+          ),
         ],
       ),
     );
